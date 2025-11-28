@@ -1,0 +1,13 @@
+{
+  "PostToolUse": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "py C:/code/claudethinks/feelsclaudeman/hooks/capture.py posttooluse",
+          "timeout": 5
+        }
+      ]
+    }
+  ]
+}

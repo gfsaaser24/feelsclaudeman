@@ -1,0 +1,12 @@
+{
+  "feelsclaudeman": {
+    "command": "node",
+    "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-server/build/index.js"],
+    "env": {
+      "FEELS_PORT": "3847",
+      "FEELS_UI_PORT": "3848",
+      "GIPHY_API_KEY": "YOUR_GIPHY_API_KEY_HERE",
+      "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data/feelsclaudeman.db"
+    }
+  }
+}

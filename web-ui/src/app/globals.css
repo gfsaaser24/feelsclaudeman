@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Claude-inspired color palette */
+:root {
+  --claude-coral: #E07A5F;
+  --claude-coral-dark: #C86B52;
+  --claude-coral-light: #F4A393;
+  --claude-cream: #FBF8F3;
+  --claude-cream-dark: #F5F0E8;
+  --claude-charcoal: #292524;
+  --claude-charcoal-light: #44403C;
+  --claude-text: #1C1917;
+  --claude-muted: #78716C;
+  --claude-purple: #8B5CF6;
+  --claude-green: #10B981;
+  --claude-blue: #3B82F6;
+  --claude-amber: #F59E0B;
+  --claude-red: #EF4444;
+}
+
+/* Base styles */
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--claude-cream);
+  color: var(--claude-text);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar - warm tones */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--claude-cream-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--claude-coral-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--claude-coral);
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'SOFT' 100, 'WONK' 1;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(224, 122, 95, 0.15);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+/* Dark card variant */
+.dark-card {
+  background: linear-gradient(135deg, var(--claude-charcoal) 0%, #1C1917 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.2),
+    0 8px 10px -6px rgba(0, 0, 0, 0.2);
+}
+
+/* Coral gradient accent */
+.coral-gradient {
+  background: linear-gradient(135deg, var(--claude-coral) 0%, var(--claude-coral-dark) 100%);
+}
+
+/* Animated background mesh */
+.mesh-bg {
+  background-color: var(--claude-cream);
+  background-image:
+    radial-gradient(at 40% 20%, rgba(224, 122, 95, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(224, 122, 95, 0.1) 0px, transparent 50%),
+    radial-gradient(at 80% 50%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
+}
+
+/* Noise texture overlay */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* Pulse animation for live indicator */
+@keyframes live-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+
+.live-pulse {
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+/* Smooth fade in */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  animation: fade-in 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+
+/* GIF shimmer loading effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--claude-charcoal) 0%,
+    var(--claude-charcoal-light) 50%,
+    var(--claude-charcoal) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Status dot glow */
+.status-glow {
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* Emotion color utilities */
+.emotion-excited { --emotion-color: #FBBF24; }
+.emotion-success { --emotion-color: #10B981; }
+.emotion-frustrated { --emotion-color: #EF4444; }
+.emotion-confused { --emotion-color: #8B5CF6; }
+.emotion-creative { --emotion-color: #EC4899; }
+.emotion-curious { --emotion-color: #3B82F6; }
+.emotion-thinking { --emotion-color: #6B7280; }
+.emotion-focused { --emotion-color: #6366F1; }
+.emotion-determined { --emotion-color: #F97316; }
+.emotion-relieved { --emotion-color: #14B8A6; }
+.emotion-proud { --emotion-color: #F59E0B; }
+.emotion-playful { --emotion-color: #F43F5E; }
+
+/* Intensity meter dots */
+.intensity-dot {
+  transition: all 0.2s ease;
+}
+
+.intensity-dot.active {
+  transform: scale(1.2);
+}
+
+/* FeelsClaudeMan commentary highlight */
+.commentary-glow {
+  background: linear-gradient(
+    135deg,
+    rgba(224, 122, 95, 0.1) 0%,
+    rgba(224, 122, 95, 0.05) 100%
+  );
+  border-left: 3px solid var(--claude-coral);
+}
+
+/* Tool badge */
+.tool-badge {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  letter-spacing: -0.02em;
+}
