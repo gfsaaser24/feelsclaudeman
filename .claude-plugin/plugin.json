@@ -1,0 +1,19 @@
+{
+  "name": "feelsclaudeman",
+  "version": "1.0.0",
+  "description": "Turn Claude's inner monologue into a meme-worthy reality show",
+  "hooks": "./hooks/hooks.json",
+  "commands": "./commands",
+  "mcpServers": {
+    "feelsclaudeman": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-server/build/index.js"],
+      "env": {
+        "FEELS_PORT": "3847",
+        "FEELS_UI_PORT": "3848",
+        "GIPHY_API_KEY": "ZPqMZkzxT3krxuHUJJyrD2uAJDktMm8I",
+        "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data/feelsclaudeman.db"
+      }
+    }
+  }
+}
