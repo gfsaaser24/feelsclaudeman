@@ -56,61 +56,98 @@ Claude Code ──► Hooks ──► Feed File ──► Daemon ──► WebSo
 
 ## Installation
 
-### Option 1: Marketplace (Easy Mode)
+### Prerequisites
 
-```bash
-claude plugins add feelsclaudeman@github.com/gfsaaser24/feelsclaudeman
-```
-
-Then install dependencies:
-```bash
-cd ~/.claude/plugins/marketplaces/feelsclaudeman
-pip install -r requirements.txt
-cd web-ui && npm install
-cd ../mcp-server && npm install && npm run build
-```
-
-### Option 2: Manual Install (For Control Freaks)
-
-#### Prerequisites
-
-- Python 3.9+ (we're not supporting your legacy 2.7 environment, grandpa)
+- Python 3.9+
 - Node.js 18+
 - Claude Code CLI
-- A willingness to watch an AI have feelings
+- Admin access (Windows needs symlinks)
 
-#### Setup
+### Plugin Structure
 
-1. **Clone it**
-   ```bash
-   cd ~/.claude/plugins
-   git clone https://github.com/gfsaaser24/feelsclaudeman.git
-   cd feelsclaudeman
-   ```
+Claude Code looks for plugins in `~/.claude/plugins/marketplaces/`. Here's what needs to be where:
 
-2. **Install the Python stuff**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```
+~/.claude/plugins/marketplaces/feelsclaudeman/
+├── .claude-plugin/
+│   └── plugin.json          # Plugin manifest (tells Claude Code what's here)
+├── commands/
+│   ├── start.md             # /feelsclaudeman:start
+│   ├── stop.md              # /feelsclaudeman:stop
+│   ├── status.md            # /feelsclaudeman:status
+│   └── dashboard.md         # /feelsclaudeman:dashboard
+├── hooks/
+│   ├── hooks.json           # Hook definitions
+│   ├── capture.py           # PostToolUse hook - captures emotions
+│   └── lifecycle.py         # Process management
+├── scripts/
+│   ├── feels-daemon.py      # Core daemon (shipped, no keys)
+│   └── feels-daemon.local.py # YOUR copy with API keys (gitignored)
+├── mcp-server/              # MCP server for status queries
+├── web-ui/                  # Next.js dashboard
+└── data/                    # SQLite database (auto-created)
+```
 
-3. **Install the JavaScript stuff**
-   ```bash
-   cd web-ui && npm install
-   cd ../mcp-server && npm install && npm run build
-   ```
+### Step 1: Clone the Repo
 
-4. **API Keys** (optional but recommended)
+```bash
+git clone https://github.com/gfsaaser24/feelsclaudeman.git
+cd feelsclaudeman
+```
 
-   Copy the daemon and add your keys to the local version:
-   ```bash
-   cp scripts/feels-daemon.py scripts/feels-daemon.local.py
-   ```
+### Step 2: Create Marketplace Symlink
 
-   Edit `feels-daemon.local.py`:
-   ```python
-   GIPHY_API_KEY = "your-key"      # Get free at developers.giphy.com
-   ANTHROPIC_API_KEY = "your-key"  # For the unhinged Haiku commentary
-   ```
+Claude Code expects plugins in `~/.claude/plugins/marketplaces/`. You need to symlink your clone there.
+
+**macOS/Linux:**
+```bash
+ln -s $(pwd) ~/.claude/plugins/marketplaces/feelsclaudeman
+```
+
+**Windows (Admin PowerShell):**
+```powershell
+New-Item -ItemType Junction -Path "$env:USERPROFILE\.claude\plugins\marketplaces\feelsclaudeman" -Target (Get-Location)
+```
+
+Or using CMD (Admin):
+```cmd
+mklink /J "%USERPROFILE%\.claude\plugins\marketplaces\feelsclaudeman" "%CD%"
+```
+
+### Step 3: Install Dependencies
+
+```bash
+# Python deps
+pip install -r requirements.txt
+
+# Web UI deps
+cd web-ui && npm install && cd ..
+
+# MCP server deps + build
+cd mcp-server && npm install && npm run build && cd ..
+```
+
+### Step 4: Configure API Keys
+
+Copy the daemon and add your keys:
+```bash
+cp scripts/feels-daemon.py scripts/feels-daemon.local.py
+```
+
+Edit `scripts/feels-daemon.local.py` and add your keys at the top:
+```python
+GIPHY_API_KEY = "your-giphy-key"      # Get free at developers.giphy.com
+ANTHROPIC_API_KEY = "your-anthropic-key"  # For Haiku commentary
+```
+
+The daemon prefers `feels-daemon.local.py` if it exists. This file is gitignored so your keys stay safe.
+
+### Step 5: Restart Claude Code
+
+Close and reopen Claude Code. It should detect the plugin automatically. Verify with:
+```
+/feelsclaudeman:status
+```
 
 ## Usage
 
