@@ -56,19 +56,35 @@ Claude Code ──► Hooks ──► Feed File ──► Daemon ──► WebSo
 
 ## Installation
 
-### Prerequisites
+### Option 1: Marketplace (Easy Mode)
+
+```bash
+claude plugins add feelsclaudeman@github.com/gfsaaser24/feelsclaudeman
+```
+
+Then install dependencies:
+```bash
+cd ~/.claude/plugins/marketplaces/feelsclaudeman
+pip install -r requirements.txt
+cd web-ui && npm install
+cd ../mcp-server && npm install && npm run build
+```
+
+### Option 2: Manual Install (For Control Freaks)
+
+#### Prerequisites
 
 - Python 3.9+ (we're not supporting your legacy 2.7 environment, grandpa)
 - Node.js 18+
 - Claude Code CLI
 - A willingness to watch an AI have feelings
 
-### Setup
+#### Setup
 
 1. **Clone it**
    ```bash
    cd ~/.claude/plugins
-   git clone https://github.com/yourusername/feelsclaudeman.git
+   git clone https://github.com/gfsaaser24/feelsclaudeman.git
    cd feelsclaudeman
    ```
 
