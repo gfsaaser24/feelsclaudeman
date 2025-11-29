@@ -28,7 +28,7 @@ from urllib.error import URLError
 import time
 
 # Configuration
-MCP_SERVER_URL = "http://localhost:3847/hook"
+MCP_SERVER_URL = "http://localhost:38470/hook"
 HTTP_TIMEOUT = 0.1  # 100ms timeout for fire-and-forget
 FEED_FILE = Path.home() / ".claude" / "feels-feed.jsonl"
 DEBUG = True  # Always debug for now to see what's happening
@@ -427,7 +427,7 @@ def main():
     debug_log(f"Context keys: {list(context.keys())}")
     debug_log(f"tool_result raw: {context.get('tool_result', 'NOT_FOUND')[:200] if context.get('tool_result') else 'EMPTY'}")
 
-    # Prepare payload for MCP server
+    # Prepare payload for daemon (via feed file)
     try:
         payload = prepare_payload(event_type, context)
     except Exception as e:
@@ -438,21 +438,11 @@ def main():
             "error": str(e)
         }
 
-    # FAST PATH: Write to feed file immediately (for daemon)
+    # Write to feed file for daemon to process
+    # Daemon handles: emotion detection, GIF search, database, WebSocket broadcast
     write_to_feed_file(payload)
 
-    # SLOW PATH: Fire-and-forget POST to MCP server (for database)
-    thread = threading.Thread(
-        target=post_to_mcp_server,
-        args=(payload,),
-        daemon=False  # Non-daemon so it completes
-    )
-    thread.start()
-
-    # Wait up to 150ms for the request to complete (fire-and-forget but give it time)
-    thread.join(timeout=0.15)
-
-    # Calculate execution time (should be <30ms for the sync part)
+    # Calculate execution time (should be <30ms)
     elapsed_ms = (time.time() - start_time) * 1000
     debug_log(f"Hook execution time: {elapsed_ms:.2f}ms")
 

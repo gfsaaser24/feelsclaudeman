@@ -13,6 +13,7 @@ secrets.json
 credentials.json
 
 # Claude Code local settings (may contain API keys in permissions)
+.claude/settings.json
 .claude/settings.local.json
 
 # ----------------------------------------
@@ -46,6 +47,12 @@ mcp-server/data/*.db-wal
 *.sqlite
 *.sqlite3
 gif-cache.json
+
+# ----------------------------------------
+# Local files with API keys
+# ----------------------------------------
+scripts/feels-daemon.local.py
+hooks/capture.local.py
 
 # ----------------------------------------
 # Logs
@@ -83,6 +90,10 @@ nul
 *.tmp
 *.temp
 .cache/
+.local/
+test-payload.json
+2025-*.txt
+*_docs.md
 
 # ----------------------------------------
 # Test coverage

@@ -40,14 +40,14 @@ The daemon auto-installs these on first run:
 ### Optional API Keys
 
 #### Giphy API Key
-- **Required for:** Custom GIF searches
-- **Get key:** [developers.giphy.com](https://developers.giphy.com/)
-- **Note:** Plugin includes a default key that works out of the box
+- **Required for:** GIF searches
+- **Get key:** [developers.giphy.com](https://developers.giphy.com/) (free tier available)
+- **Setup:** Set `GIPHY_API_KEY` environment variable or add to `scripts/feels-daemon.local.py`
 
 #### Anthropic API Key
 - **Required for:** FeelsClaudeMan meta-commentary (Haiku 4.5)
 - **Get key:** [console.anthropic.com](https://console.anthropic.com/)
-- **Note:** Plugin includes a default key that works out of the box
+- **Setup:** Set `ANTHROPIC_API_KEY` environment variable or add to `scripts/feels-daemon.local.py`
 
 ## Installation
 
@@ -331,7 +331,7 @@ python hooks/capture.py posttooluse
 
 **Check 1: Giphy API connectivity**
 ```bash
-curl "https://api.giphy.com/v1/gifs/search?api_key=ZPqMZkzxT3krxuHUJJyrD2uAJDktMm8I&q=test&limit=1"
+curl "https://api.giphy.com/v1/gifs/search?api_key=YOUR_GIPHY_API_KEY&q=test&limit=1"
 # Should return JSON with gif data
 ```
 

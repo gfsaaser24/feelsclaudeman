@@ -1,30 +1,26 @@
 ---
 description: Check FeelsClaudeMan server status and current emotion
+allowed-tools: Bash(py:*), Bash(curl:*)
 ---
 
-Check the status of the FeelsClaudeMan emotion tracking system.
+Check the status of all FeelsClaudeMan processes.
 
-**Instructions:**
-Run a quick health check on the MCP server:
+**Check process status:**
 ```bash
-curl http://localhost:3847/health
+python "${CLAUDE_PLUGIN_ROOT}/hooks/lifecycle.py" status
 ```
 
-This returns:
-- Server status (ok/error)
-- Current session ID
-- Detection mode (pattern/claude/hybrid)
-- Connected WebSocket clients
+**Check daemon health (core processing):**
+```bash
+curl -s http://localhost:3849/health
+```
 
-**Current Settings:**
-- HTTP Port: 3847 (hook events)
-- WebSocket Port: 3848 (real-time UI)
-- Detection Mode: hybrid (pattern + Claude)
-- Database: data/feelsclaudeman.db
+**Process Ports:**
+- Daemon WebSocket: 3848 (real-time emotion broadcast)
+- Daemon HTTP API: 3849 (purge, stats, health)
+- Web UI: 3000 (Next.js dashboard)
+- MCP Server: 38470 (Claude Code integration)
 
 **MCP Tools Available:**
 - `get_current_emotion` - Get latest emotion and GIF
-- `get_emotion_history` - Get recent emotions
-- `set_detection_mode` - Change detection mode
 - `get_session_stats` - Get session statistics
-- `get_viral_moments` - Get viral moment history

@@ -9,9 +9,8 @@
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/mcp-server/build/index.js"],
       "env": {
-        "FEELS_PORT": "3847",
-        "FEELS_UI_PORT": "3848",
-        "GIPHY_API_KEY": "ZPqMZkzxT3krxuHUJJyrD2uAJDktMm8I",
+        "FEELS_PORT": "38470",
+        "FEELS_UI_PORT": "38480",
         "DB_PATH": "${CLAUDE_PLUGIN_ROOT}/data/feelsclaudeman.db"
       }
     }

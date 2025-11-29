@@ -23,6 +23,9 @@ export interface Thought {
   thinking_block?: string;
   reasoning?: string;
   internal_monologue?: string;
+  emotion?: string;
+  meta_commentary?: string;
+  context_usage?: number;
   gif_search?: string;
   gif_url?: string;
   gif_title?: string;
@@ -79,6 +82,9 @@ const SCHEMA_SQL = `
     thinking_block TEXT,
     reasoning TEXT,
     internal_monologue TEXT,
+    emotion TEXT,
+    meta_commentary TEXT,
+    context_usage REAL,
     gif_search TEXT,
     gif_url TEXT,
     gif_title TEXT,
@@ -174,12 +180,14 @@ export class DatabaseClient {
       INSERT INTO thoughts (
         session_id, tool_name, tool_input, tool_result, tool_success,
         thinking_block, reasoning, internal_monologue,
+        emotion, meta_commentary, context_usage,
         gif_search, gif_url, gif_title, gif_id, intensity, display_mode, caption,
         prompt_excerpt, conversation_context, error_message,
         tags, is_viral_moment, is_rare_emotion
       ) VALUES (
         @session_id, @tool_name, @tool_input, @tool_result, @tool_success,
         @thinking_block, @reasoning, @internal_monologue,
+        @emotion, @meta_commentary, @context_usage,
         @gif_search, @gif_url, @gif_title, @gif_id, @intensity, @display_mode, @caption,
         @prompt_excerpt, @conversation_context, @error_message,
         @tags, @is_viral_moment, @is_rare_emotion
@@ -197,6 +205,9 @@ export class DatabaseClient {
       thinking_block: thought.thinking_block || null,
       reasoning: thought.reasoning || null,
       internal_monologue: thought.internal_monologue || null,
+      emotion: thought.emotion || null,
+      meta_commentary: thought.meta_commentary || null,
+      context_usage: thought.context_usage ?? null,
       gif_search: thought.gif_search || null,
       gif_url: thought.gif_url || null,
       gif_title: thought.gif_title || null,

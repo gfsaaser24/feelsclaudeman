@@ -1,10 +1,12 @@
 /**
- * Main MCP Server for FeelsClaudeMan
+ * MCP Server for FeelsClaudeMan (Status/Query Only)
  *
- * Provides:
- * - HTTP listener for hook events (port 3847)
- * - MCP tools for Claude to query emotions
- * - WebSocket server for real-time UI updates (port 3848)
+ * Architecture: Daemon handles all emotion processing, this server only provides:
+ * - MCP tools for Claude to query emotions from the shared database
+ * - HTTP health endpoint for status checks
+ *
+ * NOTE: WebSocket and emotion processing are handled by the Python daemon.
+ * This server reads from the same SQLite database as the daemon.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -17,6 +19,134 @@ import http from 'http';
 import { URL } from 'url';
 
 import { DatabaseClient, Thought } from './db/client.js';
+
+// Generate internal monologue based on emotion when not provided by Claude mode
+function generateInternalMonologue(emotion: string, toolName?: string, toolSuccess?: boolean): string {
+  const monologues: Record<string, string[]> = {
+    nailed_it: [
+      "That went exactly as planned",
+      "Clean execution, no surprises",
+      "Everything clicked into place",
+    ],
+    big_brain: [
+      "Found a clever approach here",
+      "This solution is elegant",
+      "Optimized and ready to go",
+    ],
+    chefs_kiss: [
+      "This is exactly what we needed",
+      "Perfectly structured",
+      "Can't improve on this",
+    ],
+    this_is_fine: [
+      "Working around some quirks here",
+      "Not ideal, but it works",
+      "We'll refactor this later...",
+    ],
+    dumpster_fire: [
+      "Well, that escalated quickly",
+      "Multiple issues to address",
+      "Let's take this one step at a time",
+    ],
+    confused_math: [
+      "Need to understand this better",
+      "Something's not adding up",
+      "Let me think through this",
+    ],
+    thinking: [
+      "Processing the requirements",
+      "Analyzing the approach",
+      "Working through the logic",
+    ],
+    frustrated: [
+      "This is proving challenging",
+      "Need a different approach",
+      "Not getting the expected results",
+    ],
+    curious: [
+      "Interesting... let me explore this",
+      "What happens if we try this?",
+      "Digging deeper into the details",
+    ],
+    determined: [
+      "We're going to solve this",
+      "Pushing through systematically",
+      "Almost there, keep going",
+    ],
+  };
+
+  const emotionTexts = monologues[emotion] || [
+    `Executing ${toolName || 'operation'}`,
+    "Working on it...",
+    "Processing...",
+  ];
+
+  return emotionTexts[Math.floor(Math.random() * emotionTexts.length)];
+}
+
+// Generate witty meta-commentary based on the emotion/context
+function generateMetaCommentary(emotion: string, toolName?: string, intensity: number = 5): string {
+  const commentaries: Record<string, string[]> = {
+    frustrated: [
+      "Classic Claude move: blame the tools, not the vibes",
+      "When your carefully crafted logic meets reality...",
+      "Error messages are just debugging's love language",
+    ],
+    excited: [
+      "That dopamine hit when code compiles first try",
+      "Claude's having a main character moment right now",
+      "This is the AI equivalent of caffeinated joy",
+    ],
+    confused: [
+      "Somewhere, a rubber duck is sighing",
+      "When the documentation says 'it just works'... but it doesn't",
+      "Plot twist: even AI has moments of 'wait what'",
+    ],
+    success: [
+      "Nailed it. Time for a virtual fist pump",
+      "This is Claude's 'I told you it would work' face",
+      "Stack overflow copypasta? Never heard of it",
+    ],
+    thinking: [
+      "The gears are turning, coffee is brewing",
+      "Loading wisdom... please hold",
+      "Deep in the thought mines",
+    ],
+    creative: [
+      "When inspiration strikes at 3am (for an AI that doesn't sleep)",
+      "This is what peak performance looks like",
+      "Picasso wishes he could iterate this fast",
+    ],
+    curious: [
+      "Down the rabbit hole we go",
+      "Claude's inner detective has entered the chat",
+      "Let me just check one more thing...",
+    ],
+    determined: [
+      "Claude has entered beast mode",
+      "Nothing can stop this productivity train",
+      "Obstacles? More like stepping stones",
+    ],
+    relieved: [
+      "Crisis averted. Resume normal breathing",
+      "That was closer than Claude wants to admit",
+      "The universe has restored balance",
+    ],
+    proud: [
+      "Time to add this to the portfolio",
+      "Someone screenshot this moment",
+      "Claude's LinkedIn just updated itself",
+    ],
+  };
+
+  const emotionComments = commentaries[emotion] || [
+    "Just vibing in the codebase",
+    "Another day, another tool call",
+    "The AI experience™",
+  ];
+
+  return emotionComments[Math.floor(Math.random() * emotionComments.length)];
+}
 import { GiphyClient } from './giphy/client.js';
 import { EmotionDetector, DetectionMode } from './emotion/detector.js';
 import { FeelsWebSocketServer } from './websocket/server.js';
@@ -189,46 +319,20 @@ export class FeelsClaudeManServer {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           status: 'ok',
+          role: 'status-only',
           session: this.currentSessionId,
-          mode: this.emotionDetector.getMode(),
-          wsClients: this.wsServer.getClientCount()
+          note: 'WebSocket and emotion processing handled by daemon on port 3848'
         }));
         return;
       }
 
-      // Hook endpoint
+      // Hook endpoint - DEPRECATED: Daemon handles hooks via feed file
       if (req.method === 'POST' && url.pathname === '/hook') {
-        let body = '';
-        req.on('data', chunk => body += chunk);
-        req.on('end', async () => {
-          try {
-            // Handle empty body
-            if (!body || body.trim() === '') {
-              res.writeHead(400, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ error: 'Empty request body' }));
-              return;
-            }
-
-            let data;
-            try {
-              data = JSON.parse(body);
-            } catch (parseError) {
-              console.error('[HTTP] JSON parse error:', (parseError as Error).message);
-              console.error('[HTTP] Body preview:', body.substring(0, 200));
-              res.writeHead(400, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ error: 'Invalid JSON' }));
-              return;
-            }
-
-            await this.handleHookEvent(data);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ success: true }));
-          } catch (error) {
-            console.error('[HTTP] Hook error:', error);
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Internal error' }));
-          }
-        });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          message: 'Hook processing moved to daemon',
+          note: 'Hooks now write to ~/.claude/feels-feed.jsonl for daemon to process'
+        }));
         return;
       }
 
@@ -278,6 +382,7 @@ export class FeelsClaudeManServer {
     prompt_excerpt?: string;
     error_message?: string;
     project_dir?: string;
+    context_usage?: number;
   }): Promise<void> {
     console.log(`[HTTP] Hook event: ${data.event_type}`);
 
@@ -326,6 +431,7 @@ export class FeelsClaudeManServer {
         const gif = await this.giphy.search(detection.gifSearch);
 
         // Create thought record
+        const internalMonologue = detection.vibeCheck || generateInternalMonologue(detection.emotion, data.tool_name, data.tool_success);
         const thought: Thought = {
           session_id: this.currentSessionId,
           tool_name: data.tool_name,
@@ -333,7 +439,10 @@ export class FeelsClaudeManServer {
           tool_result: data.tool_result,
           tool_success: data.tool_success,
           thinking_block: data.thinking_excerpt,
-          internal_monologue: detection.vibeCheck,
+          internal_monologue: internalMonologue,
+          emotion: detection.emotion,
+          meta_commentary: generateMetaCommentary(detection.emotion, data.tool_name, detection.intensity),
+          context_usage: data.context_usage,
           gif_search: detection.gifSearch,
           gif_url: gif.gif_url,
           gif_title: gif.gif_title,
@@ -404,19 +513,20 @@ export class FeelsClaudeManServer {
    * Start all servers
    */
   async start(): Promise<void> {
-    console.log('[FeelsClaudeMan] Starting server...');
+    console.log('[FeelsClaudeMan] Starting MCP server (status/query only)...');
+    console.log('[FeelsClaudeMan] NOTE: Daemon handles WebSocket and emotion processing');
 
-    // Start WebSocket server
-    this.wsServer.start();
+    // NOTE: WebSocket server NOT started - daemon handles real-time updates
+    // this.wsServer.start();
 
-    // Start HTTP server
+    // Start HTTP server (health checks only)
     this.startHttpServer();
 
     // Start MCP server
     const transport = new StdioServerTransport();
     await this.mcpServer.connect(transport);
 
-    console.log('[FeelsClaudeMan] Server started successfully');
+    console.log('[FeelsClaudeMan] MCP server started successfully');
   }
 
   /**

@@ -1,25 +1,25 @@
 ---
 description: Start FeelsClaudeMan server
-allowed-tools: Bash(node:*), Bash(cd:*), Bash(curl:*)
+allowed-tools: Bash(py:*), Bash(curl:*)
 ---
 
-Start the FeelsClaudeMan MCP server.
+Start all FeelsClaudeMan processes (daemon, WebSocket server, and Web UI).
 
-**Execute these steps:**
+**Note:** The MCP server starts automatically when this plugin is loaded by Claude Code.
 
-1. Check if server is already running:
+Start all services:
 ```bash
-curl -s http://localhost:3847/health 2>/dev/null || echo "NOT_RUNNING"
+python "${CLAUDE_PLUGIN_ROOT}/hooks/lifecycle.py" start
 ```
 
-2. If NOT_RUNNING, start the server in background:
+Check daemon health (HTTP API on port 3849):
 ```bash
-cd /c/code/claudethinks/feelsclaudeman/mcp-server && GIPHY_API_KEY="ZPqMZkzxT3krxuHUJJyrD2uAJDktMm8I" node build/index.js &
+curl -s http://localhost:3849/health
 ```
 
-3. Wait and verify:
+If you updated daemon code and need to reload it, use restart instead:
 ```bash
-sleep 2 && curl -s http://localhost:3847/health
+python "${CLAUDE_PLUGIN_ROOT}/hooks/lifecycle.py" restart
 ```
 
-Report success or failure to the user.
+After starting, the dashboard is available at: http://localhost:3000

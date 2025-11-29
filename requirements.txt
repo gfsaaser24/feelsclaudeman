@@ -1,0 +1,11 @@
+# FeelsClaudeMan Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core daemon dependencies
+websockets>=12.0
+aiohttp>=3.9.0
+watchdog>=4.0.0
+
+# Optional: For Haiku meta-commentary feature
+# Requires ANTHROPIC_API_KEY environment variable
+anthropic>=0.39.0

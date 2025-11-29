@@ -1,0 +1,19 @@
+{
+  "name": "feelsclaudeman",
+  "owner": {
+    "name": "FeelsClaudeMan"
+  },
+  "metadata": {
+    "description": "FeelsClaudeMan plugin marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "feelsclaudeman",
+      "source": "./",
+      "description": "Turn Claude's inner monologue into a meme-worthy reality show",
+      "version": "1.0.0",
+      "strict": true
+    }
+  ]
+}
