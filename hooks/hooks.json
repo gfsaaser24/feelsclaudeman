@@ -1,8 +1,33 @@
 {
   "description": "FeelsClaudeMan - Capture Claude's emotions on EVERY response",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py ${CLAUDE_PLUGIN_ROOT}/hooks/lifecycle.py start",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py ${CLAUDE_PLUGIN_ROOT}/hooks/lifecycle.py stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
@@ -14,22 +39,12 @@
     ],
     "Stop": [
       {
+        "matcher": "*",
         "hooks": [
           {
             "type": "command",
             "command": "py ${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.py",
             "timeout": 5
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "py ${CLAUDE_PLUGIN_ROOT}/hooks/start-daemon.py",
-            "timeout": 10
           }
         ]
       }

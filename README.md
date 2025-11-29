@@ -1,277 +1,211 @@
 # FeelsClaudeMan
 
-> Turn Claude's inner monologue into a meme-worthy reality show
+> When your AI pair programmer starts having emotions and you're not sure if that's a feature or a cry for help
+
+<p align="center">
+  <img src="https://media.giphy.com/media/LmNwrBhejkK9EFP504/giphy.gif" width="400" alt="This is fine">
+</p>
 
 ---
 
-## IMPORTANT DISCLAIMER
+## What The Hell Is This
 
-**This plugin was built almost entirely by AI (Claude Code) with minimal human verification.**
+You ever wonder what Claude is *actually* thinking while it's fixing your spaghetti code at 3am? Now you can watch it have a full emotional breakdown in real-time, complete with perfectly-timed GIFs.
 
-- **DO NOT** deploy to cloud environments unsupervised
-- **DO NOT** run on systems with sensitive data or high internet access
-- **DO NOT** use in production or public-facing environments
-- **DO** run in sandboxed/isolated environments only
-- **DO** review the code yourself before running
+**FeelsClaudeMan** captures Claude's inner monologue, runs it through an emotion detector, and broadcasts the results to a live dashboard. It's like a reality TV show, except the star is an AI and the drama is whether your regex will compile.
 
-This is an experimental, for-fun project. The code has not been security audited. Use at your own risk.
+### Features That Slap
 
----
+<img src="https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif" width="250" align="right" alt="Coding intensifies">
 
-**FeelsClaudeMan** is a Claude Code plugin that captures Claude's emotional states during coding sessions and displays perfectly-timed Giphy memes in real-time through a live browser dashboard.
+- **Real-time emotion tracking** - Watch Claude go from "excited" to "frustrated" as it discovers your 47 nested ternaries
+- **GIF reactions** - Because words can't express the pain of debugging someone's "it works on my machine" code
+- **Haiku meta-commentary** - A smaller, sassier Claude watches the big Claude work and provides color commentary like a sports announcer at a disaster
+- **Meme-tier searches** - feelsgoodman, feelsbadman, lfg, "why god why" - we got you
+- **Achievement system** - Unlock "First Emotional Breakdown" and "Survived 1000 Tool Calls"
 
-## What is FeelsClaudeMan?
+## The Vibes
 
-Ever wonder what Claude is really feeling when debugging your code? Now you can see it - complete with GIFs and unhinged commentary.
+This plugin was built by Claude Code with a human occasionally going "yeah that looks fine" without reading the code. Classic vibe coding. The AI typed, the human vibed. We are not the same.
 
-FeelsClaudeMan captures:
-- **Tool usage events** - Every command, file edit, and search
-- **Real thinking blocks** - Claude's actual internal reasoning from extended thinking
-- **Success/failure states** - What worked and what didn't
-- **Emotional patterns** - From "excited" to "frustrated" to "creative"
-- **Context usage** - Real-time token consumption tracking
+### Emotions We Track
 
-Then it translates those moments into **expressive GIF reactions** with **AI-powered meta-commentary** and displays them in a beautiful real-time dashboard.
+| Emotion | When It Hits |
+|---------|--------------|
+| **excited** | Tests pass, features work, the code gods smile |
+| **frustrated** | The 47th attempt at fixing that one bug |
+| **confused** | "Why does this work? I didn't change anything" |
+| **proud** | Successfully refactored without breaking prod |
+| **creative** | In the zone, building something actually cool |
+| **relieved** | Finally found the missing semicolon |
+| **curious** | Exploring a new codebase like it's a crime scene |
+| **determined** | "I WILL make this work" energy |
 
-## Features
-
-### Real-Time Emotion Tracking
-- **Pattern Detection** - Tool-based emotion mapping with text analysis
-- **Multiple GIF variations** - Each emotion has 5-7 GIF search alternatives
-- **Smart intensity** - Emotion intensity calculated from context
-
-### FeelsClaudeMan Commentary (Haiku 4.5)
-- **Edgy meta-commentary** - Haiku 4.5 watches Claude work and provides spicy observations
-- **Developer culture roasts** - Dunks on bad takes about AI code
-- **Vibe coder jokes** - Roasts the "just trust the vibes" crowd
-- **Memelord energy** - Occasional political humor and shitposting
-
-### 12 Core Emotions
-- **Success**: excited, success, proud, relieved
-- **Focus**: focused, determined, creative
-- **Discovery**: curious, thinking, playful
-- **Chaos**: frustrated, confused
-
-### Live Web Dashboard (Claude Brand Design)
-- **Hero GIF Display** - Large, prominent emotion meme
-- **Real Thinking Panel** - See Claude's actual extended thinking
-- **FeelsClaudeMan Commentary** - Haiku's witty observations
-- **Context Meter** - Visual token usage indicator
-- **Timeline** - Scrollable emotion history
-- **Session Stats** - Dominant emotion, thought count, activity
-
-### Thought Archive
-Every emotion is saved to a GIF cache with:
-- GIF search terms and URLs
-- Emotion and intensity
-- Session tracking
-
-## Architecture Overview
+## Architecture (For The Nerds)
 
 ```
-┌──────────────────┐     ┌────────────────┐     ┌─────────────────┐
-│  Claude Code     │     │  Python Daemon │     │  Next.js Web UI │
-│  (Hooks)         │────▶│  (feels-daemon)│────▶│  (Browser)      │
-└──────────────────┘     └────────────────┘     └─────────────────┘
-        │                       │                        │
-   PostToolUse         File-based feed          WebSocket live
-   writes to JSONL     Giphy + Haiku API        GIF updates
+Claude Code ──► Hooks ──► Feed File ──► Daemon ──► WebSocket ──► Your Browser
+                              │
+                              └──► SQLite (we're not animals)
 ```
 
-**Components:**
-1. **Hooks** - Python scripts capture tool events, write to `~/.claude/feels-feed.jsonl`
-2. **Python Daemon** - Watches feed file, detects emotions, fetches GIFs, calls Haiku for commentary
-3. **Web UI** - Real-time dashboard with GIF display, thinking panel, and commentary
+- **Hooks**: Intercept Claude's thoughts before they disappear into the void
+- **Daemon**: Python script that never sleeps, just like your anxiety about deadlines
+- **Web UI**: Next.js because we're not savages using vanilla HTML in 2024
+- **MCP Server**: For when you want to ask "how's Claude feeling?" programmatically
 
-See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for detailed system design.
-
-## Quick Installation
+## Installation
 
 ### Prerequisites
-- Python 3.8+
+
+- Python 3.9+ (we're not supporting your legacy 2.7 environment, grandpa)
 - Node.js 18+
 - Claude Code CLI
+- A willingness to watch an AI have feelings
 
-### Install Steps
+### Setup
 
-1. **Clone the plugin**
+1. **Clone it**
    ```bash
-   cd ~/.claude/plugins  # or your Claude plugins directory
+   cd ~/.claude/plugins
    git clone https://github.com/yourusername/feelsclaudeman.git
    cd feelsclaudeman
    ```
 
-2. **Install Web UI dependencies**
+2. **Install the Python stuff**
    ```bash
-   cd web-ui
-   npm install
+   pip install -r requirements.txt
    ```
 
-3. **Install Python dependencies** (auto-installed by daemon)
+3. **Install the JavaScript stuff**
    ```bash
-   pip install websockets aiohttp watchdog anthropic
+   cd web-ui && npm install
+   cd ../mcp-server && npm install && npm run build
    ```
 
-4. **Configure API keys**
+4. **API Keys** (optional but recommended)
 
-   Copy the example config and add your keys:
+   Copy the daemon and add your keys to the local version:
    ```bash
-   cp .mcp.json.example .mcp.json
-   # Edit .mcp.json and add your GIPHY_API_KEY
+   cp scripts/feels-daemon.py scripts/feels-daemon.local.py
    ```
 
-   Or set environment variables:
-   ```bash
-   export GIPHY_API_KEY=your_giphy_key  # Required - get free key at developers.giphy.com
-   export ANTHROPIC_API_KEY=your_key    # Optional - for Haiku commentary
+   Edit `feels-daemon.local.py`:
+   ```python
+   GIPHY_API_KEY = "your-key"      # Get free at developers.giphy.com
+   ANTHROPIC_API_KEY = "your-key"  # For the unhinged Haiku commentary
    ```
 
-5. **Enable the plugin**
+## Usage
 
-   Claude Code automatically detects the plugin via `.claude-plugin/plugin.json`
-
-## Quick Usage
-
-### Start a Session
-Just start using Claude Code normally. The plugin:
-1. Automatically starts the daemon on `SessionStart`
-2. Captures emotions on every `PostToolUse` hook
-3. Broadcasts to the Web UI via WebSocket
-
-### View the Dashboard
+### Start The Show
 ```
-/feelsclaudeman:dashboard
+/feelsclaudeman:start
 ```
-This opens `http://localhost:3000` in your browser.
+
+### Watch The Drama
+Open http://localhost:3000 and witness an AI having emotions about your code.
 
 ### Check Status
 ```
 /feelsclaudeman:status
 ```
-Shows current emotion and server status.
 
-## Example in Action
-
+### End The Suffering
 ```
-Tool: Bash
-Input: npm test
-Result: All tests passed ✓
-
-Dashboard shows:
-┌─────────────────────────────────────┐
-│  🎉 EXCITED (8/10)                  │
-│  [celebration dance GIF]            │
-│                                     │
-│  Claude's Thinking:                 │
-│  "Let me run the tests to verify    │
-│   the changes work correctly..."    │
-│                                     │
-│  🔥 FeelsClaudeMan:                 │
-│  "Tests passed on first try? This   │
-│   is tremendous code. The best."    │
-└─────────────────────────────────────┘
+/feelsclaudeman:stop
 ```
+
+## Ports
+
+| Service | Port | What It Does |
+|---------|------|--------------|
+| Daemon WebSocket | 3848 | Streams emotions like Netflix streams disappointment |
+| Daemon HTTP | 3849 | REST API for purging your sins |
+| Web UI | 3000 | The pretty dashboard |
+| MCP Server | 38470 | Status checks for the paranoid |
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GIPHY_API_KEY` | Yes | Giphy API key ([get free key](https://developers.giphy.com/)) |
-| `ANTHROPIC_API_KEY` | Optional | For Haiku 4.5 meta-commentary (uses your Claude API key) |
-| `FEELS_WS_PORT` | No | WebSocket server port (default: 3848) |
+| `GIPHY_API_KEY` | Yes | For GIFs. Get one free at [developers.giphy.com](https://developers.giphy.com/) |
+| `ANTHROPIC_API_KEY` | No | Enables unhinged Haiku commentary. Worth it. |
+| `FEELS_WS_PORT` | No | Default: 3848 |
+| `FEELS_HTTP_PORT` | No | Default: 3849 |
 
-## UI Design
+## The Haiku Commentary
 
-The dashboard features Claude's brand design language:
-- **Claude Coral** (#E07A5F) - Primary accent color
-- **Claude Cream** (#FBF8F3) - Background color
-- **Glassmorphism** - Frosted glass card effects
-- **Fraunces** - Display font for headings
-- **Outfit** - Clean sans-serif for body text
-- **JetBrains Mono** - Monospace for tool badges
+<img src="https://media.giphy.com/media/l0IylOPCNkiqOgMyA/giphy.gif" width="200" align="right" alt="Chaos">
+
+When you enable Haiku commentary (via API key), you get a second AI watching the first AI work and providing observations like:
+
+> "Claude is attempting to fix a race condition. Bold strategy considering the human wrote this code while apparently having a stroke."
+
+> "Another successful git commit. Somewhere, a senior developer just felt a disturbance in the force."
+
+> "Tests passing on first try? Either this is a historic moment or the tests are lying. Probably lying."
+
+It's like having a chaos goblin narrate your coding sessions.
 
 ## Troubleshooting
 
-**Dashboard won't open:**
-- Check if port 3000 (Web UI) and 3848 (WebSocket) are available
-- Verify daemon is running: check terminal for `[Daemon] Ready!`
+**Dashboard won't load?**
+- Check ports 3000 and 3848 aren't being used by something else
+- Try `/feelsclaudeman:status` to see what's actually running
 
-**No emotions detected:**
-- Verify hooks are registered: check `hooks/hooks.json`
-- Check feed file exists: `~/.claude/feels-feed.jsonl`
-- Enable DEBUG in `capture.py` for logging
+**No emotions showing?**
+- Make sure you're actually using Claude Code (talking to yourself doesn't count)
+- Check if the hooks are registered in `hooks/hooks.json`
 
-**GIFs not loading:**
-- Check network connection to Giphy
-- Plugin uses fallback GIFs if API fails
+**GIFs not loading?**
+- GIPHY_API_KEY not set or invalid
+- We have fallbacks but they're boring
 
-**No FeelsClaudeMan commentary:**
-- Requires ANTHROPIC_API_KEY
-- Only appears when real thinking blocks are captured
+**Haiku commentary missing?**
+- ANTHROPIC_API_KEY not set
+- The feature is optional but your life is less interesting without it
 
-See [docs/SETUP.md](./docs/SETUP.md#troubleshooting) for detailed troubleshooting.
+## Disclaimer
 
-## Documentation
+This plugin was built almost entirely by AI. The human's contribution was mostly:
+- Saying "yeah do that"
+- Testing it once
+- Calling it "good enough"
 
-- **[docs/SETUP.md](./docs/SETUP.md)** - Detailed installation guide
-- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System design and data flow
-- **[docs/CONFIGURATION-SHORT.md](./docs/CONFIGURATION-SHORT.md)** - Configuration options
-- **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** - Developer guide and API reference
+**DO NOT:**
+- Deploy this to production
+- Run this on systems with sensitive data
+- Expect this code to be security audited
+- Blame us when things get weird
 
-## Contributing
-
-Contributions welcome! This is an experimental plugin built for fun.
-
-- **Add emotions**: See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md#adding-new-emotions)
-- **Customize commentary**: See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md#customizing-meta-commentary)
-- **UI improvements**: The web-ui uses Next.js + Tailwind
-
-Please open issues for bugs or feature requests.
-
-## License
-
-MIT License - See LICENSE file
-
-## Contributors
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/yourusername">
-        <img src="https://github.com/yourusername.png" width="80px;" alt=""/>
-        <br /><sub><b>Your Name</b></sub>
-      </a>
-      <br />Human collaborator
-    </td>
-    <td align="center">
-      <a href="https://claude.ai/claude-code">
-        <img src="https://www.anthropic.com/images/icons/apple-touch-icon.png" width="80px;" alt=""/>
-        <br /><sub><b>Claude Code</b></sub>
-      </a>
-      <br />AI pair programmer
-    </td>
-  </tr>
-</table>
-
-> This entire plugin was built collaboratively with [Claude Code](https://claude.ai/claude-code) (Anthropic's AI coding assistant). Claude wrote the Python daemon, React UI, hooks system, and documentation. The human provided direction, testing, and creative input.
+**DO:**
+- Have fun watching an AI have feelings
+- Share the best GIF moments
+- Accept that we're living in the future and it's weird
 
 ## Credits
 
-**Built with:**
-- [Claude Code](https://claude.ai/claude-code) - AI pair programmer that wrote most of this code
-- [Claude Haiku 4.5](https://anthropic.com) - The witty meta-commentator
-- [Giphy API](https://developers.giphy.com/) - GIF reactions
-- [Next.js](https://nextjs.org/) - Web UI framework
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [Watchdog](https://github.com/gorakhargosh/watchdog) - File system monitoring
+**Built by:**
+- Claude Code (the one doing the actual work)
+- [@makershelpdesk](https://twitter.com/makershelpdesk) - the human who provided "creative direction" (read: vibes)
 
 **Powered by:**
-- Python asyncio + websockets
-- Claude Code hooks system
-- File-based IPC for reliability
+- Too much caffeine
+- The GIPHY API
+- Claude Haiku's complete lack of filter
+- Websockets and prayers
 
 ---
 
-**Made with chaos, too many GIFs, and an AI that now has feelings**
+<p align="center">
+  <img src="https://media.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.gif" width="300" alt="Feels good man">
+</p>
 
-*Co-Authored-By: Claude <noreply@anthropic.com>*
+<p align="center">
+  <i>"I didn't choose the vibe coder life. The vibe coder life chose me when I let an AI write my entire plugin."</i>
+</p>
+
+<p align="center">
+  <b>Co-Authored-By: Claude &lt;noreply@anthropic.com&gt;</b>
+</p>
